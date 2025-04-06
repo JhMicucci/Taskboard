@@ -1,6 +1,7 @@
 package br.micucci.taskboard.ui;
 
 
+import br.micucci.taskboard.dto.BoardColumnInfoDTO;
 import br.micucci.taskboard.persistence.entity.BoardColumnEntity;
 import br.micucci.taskboard.persistence.entity.BoardEntity;
 import br.micucci.taskboard.persistence.entity.CardEntity;
@@ -128,6 +129,20 @@ public class BoardMenu {
                 .toList();
         try(var connection = getConnection()){
             new CardService(connection).moveToNextColumn(cardId, boardColumnsInfo);
+        } catch (RuntimeException ex){
+            System.out.println(ex.getMessage());
+        }
+    }
+
+    private void cancelCard() throws SQLException {
+        System.out.println("Informe o id do card que deseja mover para a coluna de cancelamento");
+        var cardId = scanner.nextLong();
+        var cancelColumn = entity.getCancelColumn();
+        var boardColumnsInfo = entity.getBoardColumns().stream()
+                .map(bc -> new BoardColumnInfoDTO(bc.getId(), bc.getOrder(), bc.getKind()))
+                .toList();
+        try(var connection = getConnection()){
+            new CardService(connection).cancel(cardId, cancelColumn.getId(), boardColumnsInfo);
         } catch (RuntimeException ex){
             System.out.println(ex.getMessage());
         }

@@ -8,6 +8,9 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Optional;
 
+import static br.micucci.taskboard.persistence.converter.OffsetDateTimeConverter.toOffsetDateTime;
+import static java.util.Objects.nonNull;
+
 @AllArgsConstructor
 public class CardDAO {
 

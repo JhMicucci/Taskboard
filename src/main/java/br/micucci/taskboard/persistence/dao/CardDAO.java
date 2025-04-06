@@ -1,6 +1,7 @@
 package br.micucci.taskboard.persistence.dao;
 
 import br.micucci.taskboard.dto.CardDetailsDTO;
+import br.micucci.taskboard.persistence.entity.CardEntity;
 import lombok.AllArgsConstructor;
 
 import java.sql.Connection;
@@ -54,5 +55,33 @@ public class CardDAO {
         }
         return Optional.empty();
     }
+
+    public void moveToColumn(final Long columnId, final Long cardId) throws SQLException{
+        var sql = "UPDATE CARDS SET board_column_id = ? WHERE id = ?;";
+        try(var statement = connection.prepareStatement(sql)){
+            var i = 1;
+            statement.setLong(i ++, columnId);
+            statement.setLong(i, cardId);
+            statement.executeUpdate();
+        }
+    }
+
+    public CardEntity insert(final CardEntity entity) throws SQLException {
+        var sql = "INSERT INTO CARDS (title, description, board_column_id) values (?, ?, ?);";
+        try(var statement = connection.prepareStatement(sql)){
+            var i = 1;
+            statement.setString(i ++, entity.getTitle());
+            statement.setString(i ++, entity.getDescription());
+            statement.setLong(i, entity.getBoardColumn().getId());
+            statement.executeUpdate();
+            if (statement instanceof StatementImpl impl){
+                entity.setId(impl.getLastInsertID());
+            }
+        }
+        return entity;
+    }
+
+
+
 
 }

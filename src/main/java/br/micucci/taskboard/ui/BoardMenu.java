@@ -7,6 +7,7 @@ import br.micucci.taskboard.persistence.entity.CardEntity;
 import br.micucci.taskboard.service.BoardColumnQueryService;
 import br.micucci.taskboard.service.BoardQueryService;
 import br.micucci.taskboard.service.CardQueryService;
+import br.micucci.taskboard.service.CardService;
 import lombok.AllArgsConstructor;
 
 import java.sql.SQLException;
@@ -104,6 +105,18 @@ public class BoardMenu {
                                 System.out.printf("Está no momento na coluna %s - %s\n", c.columnId(), c.columnName());
                             },
                             () -> System.out.printf("Não existe um card com o id %s\n", selectedCardId));
+        }
+    }
+
+    private void createCard() throws SQLException{
+        var card = new CardEntity();
+        System.out.println("Informe o título do card");
+        card.setTitle(scanner.next());
+        System.out.println("Informe a descrição do card");
+        card.setDescription(scanner.next());
+        card.setBoardColumn(entity.getInitialColumn());
+        try(var connection = getConnection()){
+            new CardService(connection).create(card);
         }
     }
 
